@@ -1,29 +1,140 @@
 [
   {
     "step": 1,
-    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
+    "query": "Chào bạn, bạn có thể giới thiệu giờ làm việc và quy trình đăng ký khám bệnh tại Bệnh viện Tim Hà Nội không?",
     "action_type": "FINAL_ANSWER",
-    "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool.",
-    "output": "[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-    "latency_ms": 2845.93
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Chào bạn! Bệnh viện Tim Hà Nội xin gửi đến bạn thông tin về giờ làm việc và quy trình đăng ký khám bệnh như sau:\n\n---\n\n### **1. Giờ làm việc của Bệnh viện Tim Hà Nội**\n\n* **Khám hành chính (Từ Thứ 2 đến Thứ 6):**\n  * **Sáng:** 07h30 – 12h00\n  * **Chiều:** 13h30 – 16h30\n* **Khám theo yêu cầu / Khám Thứ 7 & Chủ Nhật:**\n  * Thứ 7: Tiếp nhận khám theo yêu cầu từ 07h30 đến 16h30.\n  * Chủ Nhật: Khám theo yêu cầu buổi sáng (tùy cơ sở) hoặc nhận bệnh nhân cấp cứu.\n* **Khoa Cấp cứu:** Phục vụ **24/7** tất cả các ngày trong tuần (kể cả ngày lễ, Tết).\n\n*(Lưu ý: Bệnh viện tiếp nhận đăng ký khám sớm từ 06h00 - 07h00 tại quầy đón tiếp để hỗ trợ bệnh nhân).*\n\n---\n\n### **2. Quy trình đăng ký khám bệnh**\n\n* **Bước 1: Đăng ký & Lấy số thứ tự**\n  * Đến quầy đón tiếp/đăng ký khám bệnh (hoặc đặt lịch hẹn trước qua điện thoại/trợ lý tư vấn).\n  * Xuất trình Căn cước công dân/Thẻ BHYT (nếu có) và giấy chuyển viện (nếu có).\n* **Bước 2: Nộp chi phí khám & Nhận phòng khám**\n  * Nộp phí khám ban đầu tại quầy thu ngân.\n  * Nhận sổ khám bệnh và số phòng khám chuyên khoa Tim mạch được chỉ định.\n* **Bước 3: Khám lâm sàng với bác sĩ**\n  * Di chuyển đến trước cửa phòng khám chỉ định, chờ gọi tên/số thứ tự vào khám.\n  * Bác sĩ khám lâm sàng và chỉ định các xét nghiệm cận lâm sàng cần thiết (như: Điện tâm đồ, Siêu âm tim, Xét nghiệm máu, X-quang...).\n* **Bước 4: Thực hiện cận lâm sàng**\n  * Thanh toán chi phí xét nghiệm/siêu âm (nếu có phát sinh ngoài BHYT).\n  * Đến các phòng chức năng tương ứng để thực hiện chỉ định.\n* **Bước 5: Nhận kết quả & Nghe tư vấn của bác sĩ**\n  * Mang đầy đủ kết quả quay lại phòng khám ban đầu.\n  * Bác sĩ kết luận bệnh, kê đơn thuốc, tư vấn chế độ sinh hoạt hoặc chỉ định nhập viện/can thiệp (nếu cần).\n* **Bước 6: Mua/Nhận thuốc & Hoàn tất thủ tục**\n  * Quẹt thẻ BHYT (nếu khám BHYT) và thanh toán chi phí còn lại.\n  * Nhận thuốc tại Nhà thuốc bệnh viện và ra về.\n\n---\n\nNếu bạn cần hỗ trợ tra cứu hồ sơ bệnh nhân hoặc đặt lịch hẹn khám với bác sĩ chuyên khoa, vui lòng cung cấp **Mã bệnh nhân (BN...)** hoặc thông tin hẹn khám cụ thể nhé!",
+    "latency_ms": 9219.5
   },
   {
     "step": 1,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy tra cứu hồ sơ bệnh nhân BN2026001 giúp tôi.",
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "patient_lookup",
     "arguments": {
-      "student_id": "SV2026001"
+      "patient_id": "BN2026001"
     },
-    "observation": {},
-    "latency_ms": 799.12
+    "observation": {
+      "status": "SUCCESS",
+      "patient_id": "BN2026001",
+      "data": {
+        "full_name": "Nguyễn Văn An",
+        "birth_year": 1975,
+        "medical_record": "Tăng huyết áp độ 2, đã ổn định",
+        "insurance": "BHYT hạn đến 12/2026",
+        "status": "Đang điều trị ngoại trú",
+        "attending_doctor": "PGS.TS Nguyễn Văn A"
+      }
+    },
+    "latency_ms": 2007.61
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Hãy tra cứu hồ sơ bệnh nhân BN2026001 giúp tôi.",
     "action_type": "FINAL_ANSWER",
-    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Chưa thể trả lời chi tiết do chưa nhận được dữ liệu từ MCP Server (hãy hoàn thành TODO 2.1).",
-    "latency_ms": 10.0
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Thông tin hồ sơ bệnh nhân mã **BN2026001** tại Bệnh viện Tim Hà Nội như sau:\n\n* **Họ và tên:** Nguyễn Văn An\n* **Năm sinh:** 1975\n* **Tình trạng bệnh/Hồ sơ bệnh án:** Tăng huyết áp độ 2, đã ổn định\n* **Bảo hiểm y tế:** BHYT hạn đến 12/2026\n* **Trạng thái:** Đang điều trị ngoại trú\n* **Bác sĩ điều trị:** PGS.TS Nguyễn Văn A\n\nNếu anh/chị cần hỗ trợ thêm thông tin hoặc muốn đặt lịch khám với bác sĩ điều trị, xin vui lòng cho tôi biết!",
+    "latency_ms": 3745.9
+  },
+  {
+    "step": 1,
+    "query": "Đặt lịch thăm khám cho bệnh nhân BN2026001 với bác sĩ PGS.TS Nguyễn Văn A vào lúc 14:00 ngày 20/09/2026.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "book_appointment",
+    "arguments": {
+      "datetime_str": "14:00 20/09/2026",
+      "doctor_name": "PGS.TS Nguyễn Văn A",
+      "patient_id": "BN2026001"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "APPT-BN2026001-99",
+      "patient_id": "BN2026001",
+      "datetime": "14:00 20/09/2026",
+      "doctor": "PGS.TS Nguyễn Văn A",
+      "message": "Đặt lịch thăm khám thành công cho bệnh nhân BN2026001 với bác sĩ PGS.TS Nguyễn Văn A vào lúc 14:00 20/09/2026 tại Bệnh viện Tim Hà Nội."
+    },
+    "latency_ms": 2889.46
+  },
+  {
+    "step": 2,
+    "query": "Đặt lịch thăm khám cho bệnh nhân BN2026001 với bác sĩ PGS.TS Nguyễn Văn A vào lúc 14:00 ngày 20/09/2026.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Đặt lịch thăm khám thành công cho bệnh nhân **BN2026001** tại Bệnh viện Tim Hà Nội. \n\n**Thông tin chi tiết lịch hẹn:**\n- **Mã đặt lịch (Booking ID):** APPT-BN2026001-99\n- **Mã bệnh nhân:** BN2026001\n- **Bác sĩ thăm khám:** PGS.TS Nguyễn Văn A\n- **Thời gian:** 14:00 ngày 20/09/2026\n- **Địa điểm:** Bệnh viện Tim Hà Nội\n\nXin vui lòng có mặt trước thời gian hẹn khoảng 15 phút và mang theo các giấy tờ cá nhân/hồ sơ khám bệnh liên quan. Chúc quý bệnh nhân luôn khỏe mạnh!",
+    "latency_ms": 4041.39
+  },
+  {
+    "step": 1,
+    "query": "Tôi là bệnh nhân BN2026002, cho tôi biết bác sĩ điều trị của tôi là ai rồi đặt lịch tái khám với chính bác sĩ đó vào 9:00 ngày 25/09/2026.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "patient_lookup",
+    "arguments": {
+      "patient_id": "BN2026002"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "patient_id": "BN2026002",
+      "data": {
+        "full_name": "Trần Thị Bình",
+        "birth_year": 1982,
+        "medical_record": "Hở van tim 2 lá nhẹ, tái khám định kỳ 6 tháng",
+        "insurance": "BHYT hạn đến 08/2026",
+        "status": "Tái khám định kỳ",
+        "attending_doctor": "TS. Lê Thị B"
+      }
+    },
+    "latency_ms": 2461.64
+  },
+  {
+    "step": 2,
+    "query": "Tôi là bệnh nhân BN2026002, cho tôi biết bác sĩ điều trị của tôi là ai rồi đặt lịch tái khám với chính bác sĩ đó vào 9:00 ngày 25/09/2026.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "book_appointment",
+    "arguments": {
+      "patient_id": "BN2026002",
+      "datetime_str": "09:00 25/09/2026",
+      "doctor_name": "TS. Lê Thị B"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "APPT-BN2026002-99",
+      "patient_id": "BN2026002",
+      "datetime": "09:00 25/09/2026",
+      "doctor": "TS. Lê Thị B",
+      "message": "Đặt lịch thăm khám thành công cho bệnh nhân BN2026002 với bác sĩ TS. Lê Thị B vào lúc 09:00 25/09/2026 tại Bệnh viện Tim Hà Nội."
+    },
+    "latency_ms": 45616.06
+  },
+  {
+    "step": 3,
+    "query": "Tôi là bệnh nhân BN2026002, cho tôi biết bác sĩ điều trị của tôi là ai rồi đặt lịch tái khám với chính bác sĩ đó vào 9:00 ngày 25/09/2026.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Chào chị **Trần Thị Bình** (Mã bệnh nhân: **BN2026002**),\n\nThông tin bác sĩ điều trị và chi tiết lịch hẹn tái khám của chị như sau:\n\n1. **Bác sĩ điều trị:** TS. Lê Thị B  \n2. **Thông tin lịch hẹn tái khám đã đặt thành công:**\n   - **Mã đặt lịch:** APPT-BN2026002-99\n   - **Bác sĩ khám:** TS. Lê Thị B\n   - **Thời gian:** 09:00 ngày 25/09/2026\n   - **Địa điểm:** Bệnh viện Tim Hà Nội\n\nChị vui lòng đến trước giờ hẹn khoảng 15 phút và mang theo mã bệnh nhân cùng các giấy tờ liên quan để hoàn tất thủ tục khám. Bệnh viện Tim Hà Nội chúc chị luôn khỏe mạnh!",
+    "latency_ms": 3748.63
+  },
+  {
+    "step": 1,
+    "query": "Hãy tra cứu hồ sơ bệnh nhân BN9999999.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "patient_lookup",
+    "arguments": {
+      "patient_id": "BN9999999"
+    },
+    "observation": {
+      "status": "NOT_FOUND",
+      "message": "Không tìm thấy hồ sơ bệnh nhân có mã 'BN9999999'"
+    },
+    "latency_ms": 1556.87
+  },
+  {
+    "step": 2,
+    "query": "Hãy tra cứu hồ sơ bệnh nhân BN9999999.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Gemini phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Kính gửi quý bệnh nhân/người nhà,\n\nHệ thống Bệnh viện Tim Hà Nội đã tiến hành tra cứu nhưng **không tìm thấy hồ sơ bệnh nhân** với mã **BN9999999**.\n\nVui lòng kiểm tra lại mã bệnh nhân xem đã chính xác chưa (mã bệnh nhân thường in trên sổ khám bệnh hoặc thẻ khám bệnh). Nếu cần hỗ trợ thêm hoặc xác minh thông tin, quý khách vui lòng liên hệ bộ phận Lễ tân / Chăm sóc khách hàng của Bệnh viện Tim Hà Nội để được trợ giúp trực tiếp.",
+    "latency_ms": 3001.24
   }
 ]

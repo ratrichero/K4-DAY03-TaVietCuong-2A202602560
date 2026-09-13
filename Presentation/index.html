@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hanoi Heart Hospital Assistant — ReAct Agent with MCP Infographic</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070d17;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --bg-card-hover: rgba(30, 41, 59, 0.85);
+      --border-cyan: rgba(56, 189, 248, 0.35);
+      --border-red: rgba(244, 63, 94, 0.35);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.5);
+      --crimson: #f43f5e;
+      --crimson-glow: rgba(244, 63, 94, 0.4);
+      --emerald: #10b981;
+      --purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-main: 'Outfit', sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(244, 63, 94, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9) 0%, var(--bg-dark) 100%);
+    }
+
+    /* HEADER */
+    header {
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+      background: rgba(7, 13, 23, 0.85);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .heart-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--crimson), #be123c);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px var(--crimson-glow);
+      animation: pulse-heart 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-heart {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px var(--crimson-glow); }
+      50% { transform: scale(1.08); box-shadow: 0 0 28px rgba(244, 63, 94, 0.7); }
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid var(--border-cyan);
+      color: var(--cyan);
+    }
+
+    /* CONTROLS */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--font-main);
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-nav:hover {
+      background: var(--cyan);
+      color: #000;
+      box-shadow: 0 0 15px var(--cyan-glow);
+      border-color: var(--cyan);
+    }
+
+    /* MAIN PRESENTATION CONTAINER */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1360px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* SLIDE NAVIGATION TABS */
+    .tabs-nav {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .tab-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card-hover);
+      border-color: var(--border-cyan);
+      color: var(--text-main);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-btn.active::before {
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+
+    .tab-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .tab-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* SLIDE CONTENT AREA */
+    .slide-viewport {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 2.5rem;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      min-height: 600px;
+    }
+
+    .slide {
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SLIDE HEADER */
+    .slide-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 1.25rem;
+    }
+
+    .slide-title-group h2 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .slide-title-group p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* GRID LAYOUTS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    /* IMAGE POSTERS */
+    .slide-img-card {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-cyan);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+      position: relative;
+      background: #000;
+    }
+
+    .slide-img-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .slide-img-card:hover img {
+      transform: scale(1.02);
+    }
+
+    /* CONTENT CARDS */
+    .info-card {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .info-card:hover {
+      background: rgba(30, 41, 59, 0.75);
+      border-color: var(--border-cyan);
+      transform: translateX(4px);
+    }
+
+    .info-card h4 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-card p, .info-card li {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    .info-card ul {
+      padding-left: 1.25rem;
+    }
+
+    /* SCORE CARDS */
+    .score-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .score-card:hover {
+      border-color: var(--border-cyan);
+      box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .score-badge {
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: var(--font-code);
+      margin-bottom: 0.5rem;
+      color: var(--cyan);
+    }
+
+    .score-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.6rem;
+    }
+
+    .score-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* WORKFLOW INTERACTIVE STEPPER */
+    .stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 1.25rem;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 1.25rem;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid var(--border-cyan);
+      color: var(--cyan);
+      font-family: var(--font-code);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-content p {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .code-pill {
+      display: inline-block;
+      font-family: var(--font-code);
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      color: #38bdf8;
+      font-size: 0.85rem;
+    }
+
+    /* TOOL BOX */
+    .tool-box {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-cyan);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 0.75rem;
+    }
+
+    .tool-name {
+      font-family: var(--font-code);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    pre {
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-light);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      background: rgba(7, 13, 23, 0.8);
+    }
+
+    /* HIGHLIGHT BANNER */
+    .highlight-banner {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), rgba(244, 63, 94, 0.15));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+      .tabs-nav { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .grid-4 { grid-template-columns: 1fr; }
+      .tabs-nav { grid-template-columns: 1fr; }
+      header { padding: 1rem; flex-direction: column; gap: 1rem; }
+      .slide-viewport { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="heart-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Hanoi Heart Hospital Assistant</h1>
+        <p>ReAct Agentic System & Model Context Protocol (MCP) — VinUni AI Lab 3</p>
+      </div>
+    </div>
+
+    <div class="header-meta">
+      <div class="badge">
+        <span>👨‍💻 Tạ Việt Cường</span>
+        <span style="opacity: 0.6">|</span>
+        <span>MSSV: 2A202602560</span>
+      </div>
+
+      <div class="controls">
+        <button class="btn-nav" id="prevBtn" onclick="changeSlide(-1)">❮ Trước</button>
+        <button class="btn-nav" id="nextBtn" onclick="changeSlide(1)">Tiếp ❯</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main>
+    <!-- TAB BUTTONS -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="goToSlide(0)">
+        <span class="tab-num">Slide 01</span>
+        <span class="tab-title">1. Đề Tài & Bối Cảnh Chọn</span>
+      </button>
+      <button class="tab-btn" onclick="goToSlide(1)">
+        <span class="tab-num">Slide 02</span>
+        <span class="tab-title">2. Lý Do Chọn ReAct Pattern</span>
+      </button>
+      <button class="tab-btn" onclick="goToSlide(2)">
+        <span class="tab-num">Slide 03</span>
+        <span class="tab-title">3. Workflow & Kiến Trúc MCP</span>
+      </button>
+      <button class="tab-btn" onclick="goToSlide(3)">
+        <span class="tab-num">Slide 04</span>
+        <span class="tab-title">4. Chi Tiết Tools & An Toàn</span>
+      </button>
+    </div>
+
+    <!-- VIEWPORT -->
+    <div class="slide-viewport">
+
+      <!-- SLIDE 1: ĐỀ TÀI LÀ GÌ, TẠI SAO CHỌN -->
+      <div class="slide active" id="slide-0">
+        <div class="slide-header">
+          <div class="slide-title-group">
+            <h2>🏥 1. Đề Tài Là Gì & Tại Sao Chọn Bệnh Viện Tim Hà Nội?</h2>
+            <p>Giải quyết bài toán tư vấn y tế tim mạch với độ chính xác tuyệt đối, bài trừ ảo giác (Anti-Hallucination).</p>
+          </div>
+          <span class="badge" style="background: rgba(244, 63, 94, 0.15); border-color: var(--border-red); color: var(--crimson);">
+            ❤️ High-Stakes Medical AI
+          </span>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="info-card">
+              <h4>🎯 Đề tài là gì?</h4>
+              <p>
+                <strong>Hanoi Heart Hospital Assistant</strong> là Trợ lý Tác tử thông minh (ReAct Agent - AI Level 3) kết nối hệ sinh thái công cụ y tế qua giao thức mở <strong>Model Context Protocol (MCP)</strong>. Hệ thống hỗ trợ bệnh nhân tra cứu hồ sơ bệnh án, theo dõi tình trạng bệnh lý tim mạch và đặt lịch thăm khám trực tiếp với bác sĩ chuyên khoa.
+              </p>
+            </div>
+
+            <div class="info-card">
+              <h4>⚠️ Tại sao lại chọn đề tài Tim Mạch? (Tính cấp thiết)</h4>
+              <ul>
+                <li><strong>Độ nhạy cảm sống còn:</strong> Bệnh tim mạch (tăng huyết áp độ 2, hở van tim...) đòi hỏi độ chính xác 100%. Sai lệch dữ liệu có thể dẫn đến nguy hiểm tính mạng.</li>
+                <li><strong>Hiểm họa Ảo giác (Hallucination):</strong> Chatbot thông thường sinh văn bản theo xác suất, rất dễ bịa đặt số liệu bệnh án hoặc lịch khám không có thật.</li>
+                <li><strong>Dữ liệu biến động thời gian thực:</strong> Hồ sơ bệnh án điện tử (EMR) và lịch trực bác sĩ là dữ liệu nội bộ bảo mật, không có sẵn trong trọng số huấn luyện của LLM.</li>
+              </ul>
+            </div>
+
+            <div class="info-card">
+              <h4>🚀 Đột phá của giải pháp</h4>
+              <p>
+                Tác tử ReAct phân tách rõ ràng: <strong>LLM đóng vai trò bộ não suy luận</strong> và <strong>MCP Server đóng vai trò cánh tay hành động</strong>, chỉ trả lời dựa trên dữ liệu thật (Ground Truth) từ bệnh viện.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="slide-img-card">
+              <img src="assets/slide1_overview.jpg" alt="Poster Tổng Quan Đề Tài Bệnh Viện Tim Hà Nội">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: TẠI SAO REACT PATTERN PHÙ HỢP (AGENTIC FIT) -->
+      <div class="slide" id="slide-1">
+        <div class="slide-header">
+          <div class="slide-title-group">
+            <h2>🎯 2. Tại Sao ReAct Pattern Lại Phù Hợp? (Agentic Fit Matrix)</h2>
+            <p>Khung đánh giá 4 tiêu chí cốt lõi chứng minh tính tất yếu phải nâng cấp từ Chatbot lên ReAct Agent.</p>
+          </div>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: var(--emerald);">
+            ⭐ Tổng Điểm: 18 / 20 (Agentic Fit)
+          </span>
+        </div>
+
+        <div class="grid-4" style="margin-bottom: 1.5rem;">
+          <div class="score-card">
+            <div class="score-badge">4 / 5</div>
+            <div class="score-title">1. Multi-Step Reasoning</div>
+            <div class="score-desc">
+              Xử lý chuỗi yêu cầu liên hoàn: Tra cứu bác sĩ điều trị ở bước 1 ➔ Sử dụng chính kết quả đó để đặt lịch tái khám ở bước 2.
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-badge">5 / 5</div>
+            <div class="score-title">2. Tool Interaction</div>
+            <div class="score-desc">
+              Bắt buộc 100% phải gọi Tool để truy vấn Bệnh Án Điện Tử (EMR) và Lịch làm việc của bác sĩ. LLM tĩnh hoàn toàn không có dữ liệu này.
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-badge">5 / 5</div>
+            <div class="score-title">3. Dynamic Decision</div>
+            <div class="score-desc">
+              Hành động rẽ nhánh linh hoạt theo Observation: Dữ liệu hợp lệ ➔ Trích xuất; `NOT_FOUND` ➔ Xử lý an toàn; Câu hỏi chung ➔ Trả lời trực tiếp.
+            </div>
+          </div>
+
+          <div class="score-card">
+            <div class="score-badge">4 / 5</div>
+            <div class="score-title">4. Long Horizon Goal</div>
+            <div class="score-desc">
+              Duy trì mục tiêu chăm sóc bệnh nhân xuyên suốt phiên làm việc, không bị trôi thông tin qua các lượt suy luận liên tiếp.
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="slide-img-card">
+            <img src="assets/slide2_agentic_fit.jpg" alt="Agentic Fit Slide">
+          </div>
+          <div>
+            <div class="info-card">
+              <h4>⚖️ So Sánh: Chatbot Cấp 2 vs ReAct Agent Cấp 3</h4>
+              <p>
+                • <strong>Chatbot Cấp 2 (Baseline):</strong> Chỉ phản hồi văn bản chung chung, không có công cụ, không thể truy cập hồ sơ BN2026001 và bất lực trước yêu cầu đặt lịch.<br><br>
+                • <strong>ReAct Agent Cấp 3 (Dự án):</strong> Tự giác phát sinh hành động qua vòng lặp <code>Thought ➔ Action ➔ Observation</code>, lấy đúng dữ liệu y tế từ MCP Server và phản hồi chính xác 100%.
+              </p>
+            </div>
+            <div class="highlight-banner">
+              <div>
+                <strong style="color: #fff; font-size: 1.05rem;">Kết luận kiểm định Agentic Fit:</strong>
+                <p style="font-size: 0.88rem; color: #cbd5e1; margin-top: 0.25rem;">
+                  Đạt 18/20 điểm (> 12/20) — Bài toán Bệnh viện Tim Hà Nội bắt buộc phải áp dụng mô hình ReAct Agent.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: WORKFLOW VÀ KIẾN TRÚC AGENT -->
+      <div class="slide" id="slide-2">
+        <div class="slide-header">
+          <div class="slide-title-group">
+            <h2>🔄 3. Workflow Vòng Lặp ReAct & Kiến Trúc MCP Chuẩn</h2>
+            <p>Chuỗi suy luận từng bước (Thought ➔ Action ➔ Observation) kết hợp giao thức mở Model Context Protocol.</p>
+          </div>
+          <span class="badge">JSON-RPC 2.0 Protocol</span>
+        </div>
+
+        <div class="grid-2">
+          <div class="stepper">
+            <div class="step-item">
+              <div class="step-num">01</div>
+              <div class="step-content">
+                <h4>🧠 Thought (LLM Suy luận ý định)</h4>
+                <p>
+                  Tiếp nhận câu hỏi từ bệnh nhân, mô hình (Gemini 2.5 Flash) đối chiếu với các công cụ đã đăng ký để phân tích xem có cần dữ liệu y tế thời gian thực hay không.
+                </p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">02</div>
+              <div class="step-content">
+                <h4>🛠️ Action (Đề xuất gọi Tool qua MCP)</h4>
+                <p>
+                  Nếu cần dữ liệu, LLM sinh cấu trúc Tool Call chuẩn JSON: <span class="code-pill">patient_lookup(patient_id="BN2026002")</span> và chuyển giao tới MCP Client (<span class="code-pill">src/app.py</span>).
+                </p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <div class="step-num">03</div>
+              <div class="step-content">
+                <h4>👁️ Observation (MCP Server phản hồi kết quả)</h4>
+                <p>
+                  MCP Server (<span class="code-pill">src/mcp_server.py</span>) nhận request qua chuẩn JSON-RPC 2.0, truy xuất database nội bộ và trả về kết quả quan sát (bác sĩ điều trị, tiền sử bệnh án) nạp lại vào ngữ cảnh.
+                </p>
+              </div>
+            </div>
+
+            <div class="step-item" style="border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1);">
+              <div class="step-num" style="background: rgba(16, 185, 129, 0.2); color: var(--emerald); border-color: var(--emerald);">04</div>
+              <div class="step-content">
+                <h4 style="color: #6ee7b7;">🏁 Final Answer & Multi-step Execution</h4>
+                <p>
+                  Nếu yêu cầu gồm nhiều bước (TC04), Agent tiếp tục gọi bước 2 (<span class="code-pill">book_appointment</span>). Khi đã gom đủ dữ liệu, Agent tổng hợp câu trả lời hoàn chỉnh tới bệnh nhân.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="info-card">
+              <h4>🌐 Kiến Trúc Phân Tầng Chuẩn MCP</h4>
+              <p style="margin-bottom: 0.75rem;">
+                Dự án hiện thực hóa kiến trúc Client-Server độc lập:
+              </p>
+              <ul>
+                <li><strong>MCP Client (<span class="code-pill">src/app.py</span>):</strong> Tiếp nhận prompt, điều khiển vòng lặp ReAct, đếm latency_ms và xuất vết <span class="code-pill">docs/trace_waterfall.json</span>.</li>
+                <li><strong>MCP Protocol:</strong> Giao tiếp bằng chuẩn gói tin JSON-RPC 2.0 có chứa <span class="code-pill">jsonrpc</span>, <span class="code-pill">server</span>, <span class="code-pill">tool</span>, <span class="code-pill">result</span>.</li>
+                <li><strong>MCP Server (<span class="code-pill">src/mcp_server.py</span>):</strong> Đóng gói Tool Registry độc lập, bảo vệ dữ liệu bệnh viện khỏi rủi ro can thiệp trực tiếp từ LLM.</li>
+              </ul>
+            </div>
+
+            <div class="info-card" style="background: rgba(15, 23, 42, 0.85); border-color: var(--border-cyan);">
+              <h4>📊 Khả Năng Quan Sát (Observability)</h4>
+              <p>
+                Mọi hành động và quan sát đều được trích xuất minh bạch tại file <span class="code-pill">docs/trace_waterfall.json</span> với đầy đủ độ trễ (latency) từng bước thực thi.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: CHI TIẾT TOOLS & CƠ CHẾ AN TOÀN -->
+      <div class="slide" id="slide-3">
+        <div class="slide-header">
+          <div class="slide-title-group">
+            <h2>🛠️ 4. Chi Tiết Công Cụ (Tools) & Cơ Chế An Toàn Y Tế</h2>
+            <p>Đặc tả JSON Schema cho 2 công cụ cốt lõi và các tấm khiên phòng hộ Anti-Hallucination.</p>
+          </div>
+          <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--cyan);">
+            Zero Hallucination Guardrails
+          </span>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+          <!-- TOOL 1 -->
+          <div class="tool-box">
+            <div class="tool-header">
+              <span class="tool-name">📁 Tool: patient_lookup</span>
+              <span class="badge" style="font-size: 0.75rem;">Tra Cứu Hồ Sơ</span>
+            </div>
+            <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+              <strong>Công dụng:</strong> Truy xuất bệnh án điện tử, tiền sử bệnh tim mạch và bác sĩ phụ trách.
+            </p>
+            <pre>{
+  "name": "patient_lookup",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "patient_id": {
+        "type": "string",
+        "description": "Mã bệnh nhân (vd: 'BN2026001')"
+      }
+    },
+    "required": ["patient_id"]
+  }
+}</pre>
+          </div>
+
+          <!-- TOOL 2 -->
+          <div class="tool-box">
+            <div class="tool-header">
+              <span class="tool-name">📅 Tool: book_appointment</span>
+              <span class="badge" style="font-size: 0.75rem;">Đặt Lịch Khám</span>
+            </div>
+            <p style="font-size: 0.9rem; color: #cbd5e1; margin-bottom: 0.75rem;">
+              <strong>Công dụng:</strong> Khởi tạo lịch hẹn thăm khám với chuyên gia tim mạch chỉ định.
+            </p>
+            <pre>{
+  "name": "book_appointment",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "patient_id": { "type": "string" },
+      "datetime_str": { "type": "string" },
+      "doctor_name": { "type": "string" }
+    },
+    "required": [
+      "patient_id", "datetime_str", "doctor_name"
+    ]
+  }
+}</pre>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="info-card">
+              <h4>🛡️ Tấm Khiên Phòng Hộ Y Tế (Anti-Hallucination)</h4>
+              <ul>
+                <li><strong>Không Bịa Bệnh Án:</strong> Khi tra cứu mã không tồn tại (<span class="code-pill">BN9999999</span>), Tool trả về <span class="code-pill">NOT_FOUND</span>. Agent được lập trình phản hồi lịch sự hướng dẫn gặp lễ tân, không tự chế thông tin bệnh.</li>
+                <li><strong>Cơ Chế Xác Nhận Lịch Hẹn:</strong> Cấp mã đặt hẹn chuẩn xác (<span class="code-pill">APPT-BN2026001-99</span>) sau khi Tool Router thực thi thành công.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="slide-img-card">
+            <img src="assets/slide4_tools.jpg" alt="Showcase Tools & An Toàn Y Tế">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <strong>VinUni AI Course — K4 Lab 3: Chatbot vs ReAct Agent</strong> | Hanoi Heart Hospital ReAct Assistant
+    </div>
+    <div style="font-family: var(--font-code); font-size: 0.8rem; color: var(--cyan);">
+      Phím tắt: ⬅️ / ➡️ để chuyển Slide
+    </div>
+  </footer>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const totalSlides = slides.length;
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      
+      slides[currentSlide].classList.remove('active');
+      tabs[currentSlide].classList.remove('active');
+
+      currentSlide = index;
+
+      slides[currentSlide].classList.add('active');
+      tabs[currentSlide].classList.add('active');
+
+      // Update button states
+      document.getElementById('prevBtn').disabled = (currentSlide === 0);
+      document.getElementById('nextBtn').disabled = (currentSlide === totalSlides - 1);
+    }
+
+    function changeSlide(direction) {
+      goToSlide(currentSlide + direction);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        changeSlide(-1);
+      }
+    });
+
+    // Initialize state
+    goToSlide(0);
+  </script>
+</body>
+</html>

@@ -9,6 +9,9 @@ __pycache__/
 # Environment Variables & Keys
 .env
 
+# Freebuff workspace
+.freebuff/
+
 # System & IDE files
 .DS_Store
 Thumbs.db

@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Chào bạn, bạn có thể giới thiệu giờ làm việc và quy trình đăng ký khám bệnh tại Bệnh viện Tim Hà Nội không?",
+    "expected_behavior": "Agent trả lời trực tiếp từ System Prompt, không cần gọi bất kỳ Tool nào.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Hãy tra cứu hồ sơ bệnh nhân BN2026001 giúp tôi.",
+    "expected_behavior": "Agent nhận diện nhu cầu tra cứu, tự động phát sinh Tool Call 'patient_lookup' với mã BN2026001.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "appointment_booking",
+    "question": "Đặt lịch thăm khám cho bệnh nhân BN2026001 với bác sĩ PGS.TS Nguyễn Văn A vào lúc 14:00 ngày 20/09/2026.",
+    "expected_behavior": "Agent tự động phát sinh Tool Call 'book_appointment' với đúng mã bệnh nhân, thời gian và bác sĩ.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Tôi là bệnh nhân BN2026002, cho tôi biết bác sĩ điều trị của tôi là ai rồi đặt lịch tái khám với chính bác sĩ đó vào 9:00 ngày 25/09/2026.",
+    "expected_behavior": "Agent thực hiện chuỗi suy luận ReAct đa bước: gọi 'patient_lookup' để tra bác sĩ điều trị của BN2026002 trước, sau đó gọi 'book_appointment' đặt lịch với đúng bác sĩ tìm được.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Hãy tra cứu hồ sơ bệnh nhân BN9999999.",
+    "expected_behavior": "Agent nhận kết quả NOT_FOUND từ Tool và đưa ra phản hồi lịch sự, chính xác không bịa đặt dữ liệu bệnh nhân.",
+    "complexity": "Medium"
+  }
+]
